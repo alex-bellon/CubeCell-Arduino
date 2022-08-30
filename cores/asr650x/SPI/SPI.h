@@ -59,6 +59,7 @@ private:
     int8_t _mosi;
     int8_t _ss;
     uint32_t _freq;
+    uint32_t _clock;
     uint8_t  _bitOrder;
     uint8_t  _dataMode;
     bool _inTransaction;
@@ -67,6 +68,9 @@ public:
     SPIClass(uint8_t spi_bus);
     bool begin(int8_t sck=-1, int8_t miso=-1, int8_t mosi=-1, int8_t ss=-1);
     void end();
+    void setClockDivider(uint32_t clock);
+    void setDataMode(uint8_t dataMode);
+    void setBitOrder(uint8_t bitOrder);
     void setFrequency(uint32_t freq);
     void beginTransaction(SPISettings settings);
     void endTransaction(void);

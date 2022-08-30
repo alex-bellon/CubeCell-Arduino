@@ -102,6 +102,61 @@ void SPIClass::end()
 	}
 }
 
+void SPIClass::setClockDivider(uint32_t clock)
+{
+    // TODO balex: this might be wrong, see SPI_1_SCBCLK_SetFranctionalDividerRegister() in /projects/PSoC4/SPI_1_SCBCLK.c
+    _clock = clock;
+    uint32 maskVal;
+    uint32 regVal;
+    if (_spi_num == 0)
+    {
+        maskVal = SPI_1_SCBCLK_DIV_REG & (uint32)(~(uint32)SPI_1_SCBCLK_DIV_INT_MASK);
+        regVal = _clock | maskVal;
+        SPI_1_SCBCLK_DIV_REG = regVal;
+    }
+    if (_spi_num == 1)
+    {
+        maskVal = SPI_2_SCBCLK_DIV_REG & (uint32)(~(uint32)SPI_2_SCBCLK_DIV_INT_MASK);
+        regVal = _clock | maskVal;
+        SPI_2_SCBCLK_DIV_REG = _clock;
+    }
+}
+
+void SPIClass::setDataMode(uint8_t dataMode)
+{
+    _dataMode = dataMode;
+    if (_spi_num == 0)
+    {
+        uint32_t temp = SPI_1_SPI_CTRL_REG;
+        SPI_1_SPI_CTRL_REG = temp & ~(0x03<<2) | (_dataMode << 2);
+    }
+    if (_spi_num == 1)
+    {
+        uint32_t temp = SPI_2_SPI_CTRL_REG;
+        SPI_2_SPI_CTRL_REG = temp & ~(0x03<<2) | (_dataMode << 2);
+    }
+}
+
+void SPIClass::setBitOrder(uint8_t bitOrder)
+{
+    _bitOrder = bitOrder;
+    if (_spi_num == 0)
+    {
+        uint32_t temp = SPI_1_RX_CTRL_REG;
+        SPI_1_RX_CTRL_REG = temp & ~(0x01<<8) | (_bitOrder<<8);
+        temp = SPI_1_TX_CTRL_REG;
+        SPI_1_TX_CTRL_REG = temp & ~(0x01<<8) | (_bitOrder<<8);
+    }
+    if (_spi_num == 1)
+    {
+        uint32_t temp = SPI_2_RX_CTRL_REG;
+        SPI_2_RX_CTRL_REG = temp & ~(0x01<<8) | (_bitOrder<<8);
+        temp = SPI_2_TX_CTRL_REG;
+        SPI_2_TX_CTRL_REG = temp & ~(0x01<<8) | (_bitOrder<<8);
+    }
+    
+}
+
 void SPIClass::setFrequency(uint32_t freq)
 {
 	_freq = freq;
