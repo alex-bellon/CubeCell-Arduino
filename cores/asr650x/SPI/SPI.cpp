@@ -24,7 +24,7 @@
 #include "HardwareSerial.h"
 
 #define spi_TIMEOUT	500
-
+#define FREQ 1000000
 
 SPIClass::SPIClass(uint8_t spi_bus)
     :_spi_num(spi_bus)
@@ -32,7 +32,7 @@ SPIClass::SPIClass(uint8_t spi_bus)
     ,_miso(-1)
     ,_mosi(-1)
     ,_ss(-1)
-    ,_freq(1000000)
+    ,_freq(FREQ)
     ,_inTransaction(false)
 {}
 
@@ -161,9 +161,9 @@ void SPIClass::setFrequency(uint32_t freq)
 {
 	_freq = freq;
 	
-	if(_freq > 6000000)
+	if(_freq > FREQ)
 	{
-		_freq = 6000000;
+		_freq = FREQ;
 	}
 	
 	if(_spi_num == 0)
